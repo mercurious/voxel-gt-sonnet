@@ -1,0 +1,23 @@
+<!doctype html><html><body style="margin:0;background:#222"><canvas id="c"></canvas>
+<script type="importmap">{"imports":{"three":"../vendor/three.module.js"}}</script>
+<script type="module">
+import * as THREE from '../vendor/three.module.js';
+import { CAR_SPECS, createCarObject } from '../js/cars.js';
+const q = new URLSearchParams(location.search);
+const view = q.get('view') || 'front34';
+const r = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true });
+r.setSize(innerWidth, innerHeight);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x8fb4d8);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x556677, 1.2));
+const d = new THREE.DirectionalLight(0xffffff, 2.2); d.position.set(3, 6, 4); scene.add(d);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshLambertMaterial({ color: 0x444a55 })); floor.rotation.x = -Math.PI / 2; scene.add(floor);
+CAR_SPECS.forEach((s, i) => {
+  const c = createCarObject(s, s.colors[+(q.get('c') || 0)][1], q.get('stripe') === '1');
+  c.position.set((i - 2) * +(q.get('sp')||4.2), 0, 0);
+  c.rotation.y = view === 'side' ? Math.PI / 2 : view === 'rear' ? Math.PI + 0.5 : -0.6;
+  scene.add(c);
+});
+const cam = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 200);
+const D=+(q.get('d')||15); const off=+(q.get('x')||0); cam.position.set(off, D*0.2, D); cam.lookAt(off, 0.6, 0);
+r.render(scene, cam); window.done = true;
+</script></body></html>

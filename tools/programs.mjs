@@ -1,0 +1,58 @@
+// Raw "turtle" programs for the three circuits (game scale, roughly 0.65 x real).
+// {s:len} straight, {r,a} arc (a>0 right, a<0 left). adj:1 straights are tuned so the loop closes.
+export default {
+  monza: {
+    startBearing: 0, net: 360, minSep: 80, fig8: false,
+    prog: [
+      { s: 480, adj: 1 }, { r: 32, a: 55 }, { s: 18 }, { r: 32, a: -60 },
+      { s: 110, adj: 1 }, { r: 420, a: 60 },
+      { s: 150, adj: 1 }, { r: 38, a: -38 }, { s: 12 }, { r: 38, a: 38 },
+      { s: 190, adj: 1 }, { r: 80, a: 72 }, { s: 70, adj: 1 }, { r: 62, a: 60 },
+      { s: 300, adj: 1 },
+      { r: 55, a: -35 }, { s: 12 }, { r: 45, a: 62 }, { s: 10 }, { r: 55, a: -27 },
+      { s: 700, adj: 1 },
+      { r: 150, a: 173 },
+      { s: 250, adj: 1 },
+    ],
+  },
+  suzuka: {
+    startBearing: 45, net: 0, minSep: 75, fig8: true,
+    prog: [
+      { s: 430, adj: 1 },
+      { r: 62, a: 95 }, { s: 14 }, { r: 48, a: 72 },
+      { s: 50, adj: 1 },
+      { r: 62, a: -42 }, { s: 6 }, { r: 70, a: 58 }, { s: 6 }, { r: 62, a: -52 }, { s: 6 }, { r: 70, a: 46 },
+      { s: 50, adj: 1 },
+      { r: 105, a: -32 },
+      { s: 110, adj: 1 },
+      { r: 42, a: 64 }, { s: 28 }, { r: 26, a: 76 },
+      { s: 200, adj: 1 },
+      { r: 22, a: -152 },
+      { s: 150, adj: 1 }, { r: 150, a: -14 }, { s: 90, adj: 1 },
+      { r: 60, a: -44 }, { r: 85, a: -53 },
+      { s: 380, adj: 1 },
+      { r: 120, a: -22 },
+      { s: 90, adj: 1 }, { r: 32, a: 42 }, { s: 8 }, { r: 32, a: -42 },
+      { s: 200, adj: 1 },
+    ],
+  },
+  laguna: {
+    startBearing: 90, net: 360, minSep: 70, fig8: false,
+    prog: [
+      { s: 330, adj: 1 }, { r: 200, a: 10 },
+      { s: 230, adj: 1 },
+      { r: 26, a: 168 },
+      { s: 100, adj: 1 },
+      { r: 50, a: -52 }, { s: 30 }, { r: 60, a: 56 },
+      { s: 50, adj: 1 }, { r: 75, a: -38 },
+      { s: 70, adj: 1 }, { r: 110, a: -64 },
+      { s: 60, adj: 1 }, { r: 50, a: 50 },
+      { s: 160, adj: 1 },
+      { r: 22, a: -55 }, { s: 8 }, { r: 22, a: 88 },
+      { s: 70, adj: 1 }, { r: 70, a: -36 }, { s: 30 }, { r: 50, a: 64 },
+      { s: 80, adj: 1 },
+      { r: 40, a: 95 },
+      { s: 200, adj: 1 },
+    ],
+  },
+};

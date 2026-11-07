@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voxel GT</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<div id="ui">
+  <!-- ============ TITLE ============ -->
+  <section id="screen-title" class="screen">
+    <div class="title-wrap">
+      <div class="logo"><span class="l1">VOXEL</span><span class="l2">GT</span></div>
+      <div class="tagline">THE REAL DRIVING SIMULATOR&nbsp;·&nbsp;IN BLOCKS</div>
+      <div class="menu">
+        <button class="btn big" data-act="start-race">ARCADE RACE<small>6 cars · standing start</small></button>
+        <button class="btn big" data-act="start-tt">TIME TRIAL<small>chase your ghost</small></button>
+        <button class="btn" data-act="show-controls">CONTROLS</button>
+      </div>
+      <div class="foot">5 cars · 3 circuits · Mazda · Toyota · Nissan · Porsche · Ferrari &nbsp;|&nbsp; Monza · Suzuka · Laguna Seca</div>
+    </div>
+  </section>
+
+  <!-- ============ GARAGE ============ -->
+  <section id="screen-garage" class="screen hidden">
+    <div class="topbar"><button class="btn small" data-act="back-title">‹ BACK</button><div class="crumb">1 · CHOOSE YOUR CAR</div><button class="btn small primary" data-act="to-tracks">NEXT ›</button></div>
+    <div class="garage-left panel">
+      <div class="brand" id="g-brand">MAZDA</div>
+      <div class="model" id="g-model">RX-7 Spirit R</div>
+      <div class="meta" id="g-meta">2002 · Japan</div>
+      <div class="desc" id="g-desc"></div>
+      <div class="bars" id="g-bars"></div>
+      <div class="specs" id="g-specs"></div>
+    </div>
+    <div class="garage-right panel">
+      <div class="lbl">PAINT</div>
+      <div class="swatches" id="g-swatches"></div>
+      <label class="check"><input type="checkbox" id="g-stripe"><span>RACING STRIPES</span></label>
+      <div class="lbl">CAR</div>
+      <div class="carlist" id="g-list"></div>
+    </div>
+    <button class="arrow left" data-act="car-prev">‹</button>
+    <button class="arrow right" data-act="car-next">›</button>
+    <div class="hint">← → change car · drag to rotate · Enter to continue</div>
+  </section>
+
+  <!-- ============ TRACKS ============ -->
+  <section id="screen-tracks" class="screen hidden">
+    <div class="topbar"><button class="btn small" data-act="to-garage">‹ BACK</button><div class="crumb">2 · CHOOSE A CIRCUIT</div><button class="btn small primary" data-act="launch">START ›</button></div>
+    <div class="track-cards" id="t-cards"></div>
+    <div class="track-detail panel">
+      <div class="td-left">
+        <div class="td-name" id="t-name"></div>
+        <div class="td-nick" id="t-nick"></div>
+        <div class="td-blurb" id="t-blurb"></div>
+        <div class="td-stats" id="t-stats"></div>
+        <div class="td-best" id="t-best"></div>
+      </div>
+      <canvas id="t-map" width="360" height="300"></canvas>
+      <div class="td-opts">
+        <div class="opt" id="o-laps-wrap"><span class="lbl">LAPS</span><div class="seg" id="o-laps"></div></div>
+        <div class="opt" id="o-diff-wrap"><span class="lbl">RIVALS</span><div class="seg" id="o-diff"></div></div>
+        <div class="opt"><span class="lbl">DRIVING LINE</span><div class="seg" id="o-line"></div></div>
+        <div class="opt"><span class="lbl">STEERING ASSIST</span><div class="seg" id="o-assist"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTROLS ============ -->
+  <section id="screen-controls" class="screen hidden">
+    <div class="panel center-panel">
+      <h2>CONTROLS</h2>
+      <table class="keys">
+        <tr><td><kbd>W</kbd> <kbd>↑</kbd></td><td>Accelerate</td></tr>
+        <tr><td><kbd>S</kbd> <kbd>↓</kbd></td><td>Brake / reverse</td></tr>
+        <tr><td><kbd>A</kbd><kbd>D</kbd> <kbd>←</kbd><kbd>→</kbd></td><td>Steer</td></tr>
+        <tr><td><kbd>Space</kbd></td><td>Handbrake</td></tr>
+        <tr><td><kbd>C</kbd></td><td>Change camera</td></tr>
+        <tr><td><kbd>L</kbd></td><td>Toggle driving line</td></tr>
+        <tr><td><kbd>R</kbd></td><td>Reset onto track</td></tr>
+        <tr><td><kbd>M</kbd></td><td>Mute</td></tr>
+        <tr><td><kbd>Esc</kbd> <kbd>P</kbd></td><td>Pause</td></tr>
+      </table>
+      <p class="note">Gamepad: left stick steer · RT throttle · LT brake · X handbrake · Y camera · Start pause.<br>Gearbox is automatic. The driving line turns <b style="color:#4f4">green</b> = go, <b style="color:#fd3">yellow</b> = lift, <b style="color:#f55">red</b> = brake.</p>
+      <button class="btn primary" data-act="back-title">OK</button>
+    </div>
+  </section>
+
+  <!-- ============ LOADING ============ -->
+  <section id="screen-loading" class="screen hidden"><div class="loading"><div class="spinner"></div><div id="load-text">BUILDING CIRCUIT…</div></div></section>
+
+  <!-- ============ HUD ============ -->
+  <div id="hud" class="hidden">
+    <div class="hud-tl"><div class="pos"><span id="h-pos">1</span><small>/<span id="h-count">6</span></small></div><div class="lap">LAP <b id="h-lap">1</b>/<span id="h-laps">3</span></div></div>
+    <div class="hud-board" id="h-board"></div>
+    <div class="hud-tr">
+      <canvas id="h-map" width="200" height="200"></canvas>
+      <div class="times">
+        <div><span>TIME</span><b id="h-cur">0:00.000</b></div>
+        <div><span>LAST</span><b id="h-last">--:--.---</b></div>
+        <div><span>BEST</span><b id="h-best">--:--.---</b></div>
+      </div>
+    </div>
+    <div class="hud-br">
+      <div class="rpm" id="h-rpm"></div>
+      <div class="speedo"><b id="h-kmh">0</b><small>km/h</small><div class="gear" id="h-gear">N</div></div>
+    </div>
+    <div class="hud-center"><div id="h-cd"></div><div id="h-msg"></div><div id="h-sub"></div></div>
+    <div id="h-wrong" class="wrong hidden">WRONG WAY</div>
+    <div class="hud-bl" id="h-keys">W/S throttle·brake · A/D steer · SPACE handbrake · C camera · L line · R reset · ESC pause</div>
+  </div>
+
+  <!-- ============ PAUSE ============ -->
+  <section id="screen-pause" class="screen hidden">
+    <div class="panel center-panel">
+      <h2>PAUSED</h2>
+      <div class="menu">
+        <button class="btn big primary" data-act="resume">RESUME</button>
+        <button class="btn" data-act="restart">RESTART</button>
+        <button class="btn" data-act="quit-tracks">CHANGE TRACK</button>
+        <button class="btn" data-act="quit-title">QUIT TO MENU</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section id="screen-results" class="screen hidden">
+    <div class="panel results">
+      <div class="res-head"><div class="res-title" id="r-title">RACE RESULT</div><div class="res-sub" id="r-sub"></div></div>
+      <table id="r-table"></table>
+      <div class="menu row">
+        <button class="btn primary" data-act="restart">RACE AGAIN</button>
+        <button class="btn" data-act="quit-garage">CHANGE CAR</button>
+        <button class="btn" data-act="quit-tracks">CHANGE TRACK</button>
+        <button class="btn" data-act="quit-title">MENU</button>
+      </div>
+    </div>
+  </section>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
